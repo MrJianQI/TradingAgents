@@ -160,25 +160,25 @@ def get_simfin_balance_sheet(
     )
     df = pd.read_csv(data_path, sep=";")
 
-    # Convert date strings to datetime objects and remove any time components
+    # 将日期字符串转换为 datetime 对象并移除时间部分
     df["Report Date"] = pd.to_datetime(df["Report Date"], utc=True).dt.normalize()
     df["Publish Date"] = pd.to_datetime(df["Publish Date"], utc=True).dt.normalize()
 
-    # Convert the current date to datetime and normalize
+    # 将当前日期转换为 datetime 并标准化
     curr_date_dt = pd.to_datetime(curr_date, utc=True).normalize()
 
-    # Filter the DataFrame for the given ticker and for reports that were published on or before the current date
+    # 过滤 DataFrame，仅保留在当前日期之前发布的指定股票报告
     filtered_df = df[(df["Ticker"] == ticker) & (df["Publish Date"] <= curr_date_dt)]
 
-    # Check if there are any available reports; if not, return a notification
+    # 检查是否有可用报告；若无则返回提示
     if filtered_df.empty:
         print("No balance sheet available before the given current date.")
         return ""
 
-    # Get the most recent balance sheet by selecting the row with the latest Publish Date
+    # 通过选择最新发布日期的行获取最近的资产负债表
     latest_balance_sheet = filtered_df.loc[filtered_df["Publish Date"].idxmax()]
 
-    # drop the SimFinID column
+    # 删除 SimFinID 列
     latest_balance_sheet = latest_balance_sheet.drop("SimFinId")
 
     return (
@@ -207,25 +207,25 @@ def get_simfin_cashflow(
     )
     df = pd.read_csv(data_path, sep=";")
 
-    # Convert date strings to datetime objects and remove any time components
+    # 将日期字符串转换为 datetime 对象并移除时间部分
     df["Report Date"] = pd.to_datetime(df["Report Date"], utc=True).dt.normalize()
     df["Publish Date"] = pd.to_datetime(df["Publish Date"], utc=True).dt.normalize()
 
-    # Convert the current date to datetime and normalize
+    # 将当前日期转换为 datetime 并标准化
     curr_date_dt = pd.to_datetime(curr_date, utc=True).normalize()
 
-    # Filter the DataFrame for the given ticker and for reports that were published on or before the current date
+    # 过滤 DataFrame，仅保留在当前日期之前发布的指定股票报告
     filtered_df = df[(df["Ticker"] == ticker) & (df["Publish Date"] <= curr_date_dt)]
 
-    # Check if there are any available reports; if not, return a notification
+    # 检查是否有可用报告；若无则返回提示
     if filtered_df.empty:
         print("No cash flow statement available before the given current date.")
         return ""
 
-    # Get the most recent cash flow statement by selecting the row with the latest Publish Date
+    # 通过选择最新发布日期的行获取最近的现金流量表
     latest_cash_flow = filtered_df.loc[filtered_df["Publish Date"].idxmax()]
 
-    # drop the SimFinID column
+    # 删除 SimFinID 列
     latest_cash_flow = latest_cash_flow.drop("SimFinId")
 
     return (
@@ -254,25 +254,25 @@ def get_simfin_income_statements(
     )
     df = pd.read_csv(data_path, sep=";")
 
-    # Convert date strings to datetime objects and remove any time components
+    # 将日期字符串转换为 datetime 对象并移除时间部分
     df["Report Date"] = pd.to_datetime(df["Report Date"], utc=True).dt.normalize()
     df["Publish Date"] = pd.to_datetime(df["Publish Date"], utc=True).dt.normalize()
 
-    # Convert the current date to datetime and normalize
+    # 将当前日期转换为 datetime 并标准化
     curr_date_dt = pd.to_datetime(curr_date, utc=True).normalize()
 
-    # Filter the DataFrame for the given ticker and for reports that were published on or before the current date
+    # 过滤 DataFrame，仅保留在当前日期之前发布的指定股票报告
     filtered_df = df[(df["Ticker"] == ticker) & (df["Publish Date"] <= curr_date_dt)]
 
-    # Check if there are any available reports; if not, return a notification
+    # 检查是否有可用报告；若无则返回提示
     if filtered_df.empty:
         print("No income statement available before the given current date.")
         return ""
 
-    # Get the most recent income statement by selecting the row with the latest Publish Date
+    # 通过选择最新发布日期的行获取最近的收益表
     latest_income = filtered_df.loc[filtered_df["Publish Date"].idxmax()]
 
-    # drop the SimFinID column
+    # 删除 SimFinID 列
     latest_income = latest_income.drop("SimFinId")
 
     return (
@@ -430,7 +430,7 @@ def get_stock_stats_indicators_window(
 ) -> str:
 
     best_ind_params = {
-        # Moving Averages
+        # 移动平均线
         "close_50_sma": (
             "50 SMA: A medium-term trend indicator. "
             "Usage: Identify trend direction and serve as dynamic support/resistance. "
@@ -446,7 +446,7 @@ def get_stock_stats_indicators_window(
             "Usage: Capture quick shifts in momentum and potential entry points. "
             "Tips: Prone to noise in choppy markets; use alongside longer averages for filtering false signals."
         ),
-        # MACD Related
+        # MACD 相关
         "macd": (
             "MACD: Computes momentum via differences of EMAs. "
             "Usage: Look for crossovers and divergence as signals of trend changes. "
@@ -462,13 +462,13 @@ def get_stock_stats_indicators_window(
             "Usage: Visualize momentum strength and spot divergence early. "
             "Tips: Can be volatile; complement with additional filters in fast-moving markets."
         ),
-        # Momentum Indicators
+        # 动量指标
         "rsi": (
             "RSI: Measures momentum to flag overbought/oversold conditions. "
             "Usage: Apply 70/30 thresholds and watch for divergence to signal reversals. "
             "Tips: In strong trends, RSI may remain extreme; always cross-check with trend analysis."
         ),
-        # Volatility Indicators
+        # 波动率指标
         "boll": (
             "Bollinger Middle: A 20 SMA serving as the basis for Bollinger Bands. "
             "Usage: Acts as a dynamic benchmark for price movement. "
@@ -489,7 +489,7 @@ def get_stock_stats_indicators_window(
             "Usage: Set stop-loss levels and adjust position sizes based on current market volatility. "
             "Tips: It's a reactive measure, so use it as part of a broader risk management strategy."
         ),
-        # Volume-Based Indicators
+        # 成交量指标
         "vwma": (
             "VWMA: A moving average weighted by volume. "
             "Usage: Confirm trends by integrating price action with volume data. "
@@ -512,7 +512,7 @@ def get_stock_stats_indicators_window(
     before = curr_date - relativedelta(days=look_back_days)
 
     if not online:
-        # read from YFin data
+        # 从 YFin 数据读取
         data = pd.read_csv(
             os.path.join(
                 DATA_DIR,
@@ -524,7 +524,7 @@ def get_stock_stats_indicators_window(
 
         ind_string = ""
         while curr_date >= before:
-            # only do the trading dates
+            # 仅处理交易日期
             if curr_date.strftime("%Y-%m-%d") in dates_in_df.values:
                 indicator_value = get_stockstats_indicator(
                     symbol, indicator, curr_date.strftime("%Y-%m-%d"), online
@@ -534,7 +534,7 @@ def get_stock_stats_indicators_window(
 
             curr_date = curr_date - relativedelta(days=1)
     else:
-        # online gathering
+        # 在线获取
         ind_string = ""
         while curr_date >= before:
             indicator_value = get_stockstats_indicator(
@@ -589,12 +589,12 @@ def get_YFin_data_window(
     curr_date: Annotated[str, "Start date in yyyy-mm-dd format"],
     look_back_days: Annotated[int, "how many days to look back"],
 ) -> str:
-    # calculate past days
+    # 计算过去的天数
     date_obj = datetime.strptime(curr_date, "%Y-%m-%d")
     before = date_obj - relativedelta(days=look_back_days)
     start_date = before.strftime("%Y-%m-%d")
 
-    # read in data
+    # 读取数据
     data = pd.read_csv(
         os.path.join(
             DATA_DIR,
@@ -602,18 +602,18 @@ def get_YFin_data_window(
         )
     )
 
-    # Extract just the date part for comparison
+    # 仅提取日期部分用于比较
     data["DateOnly"] = data["Date"].str[:10]
 
-    # Filter data between the start and end dates (inclusive)
+    # 过滤起始和结束日期（含）之间的数据
     filtered_data = data[
         (data["DateOnly"] >= start_date) & (data["DateOnly"] <= curr_date)
     ]
 
-    # Drop the temporary column we created
+    # 删除临时创建的列
     filtered_data = filtered_data.drop("DateOnly", axis=1)
 
-    # Set pandas display options to show the full DataFrame
+    # 设置 pandas 显示选项以显示完整 DataFrame
     with pd.option_context(
         "display.max_rows", None, "display.max_columns", None, "display.width", None
     ):
@@ -634,32 +634,32 @@ def get_YFin_data_online(
     datetime.strptime(start_date, "%Y-%m-%d")
     datetime.strptime(end_date, "%Y-%m-%d")
 
-    # Create ticker object
+    # 创建 ticker 对象
     ticker = yf.Ticker(symbol.upper())
 
-    # Fetch historical data for the specified date range
+    # 获取指定日期范围的历史数据
     data = ticker.history(start=start_date, end=end_date)
 
-    # Check if data is empty
+    # 检查数据是否为空
     if data.empty:
         return (
             f"No data found for symbol '{symbol}' between {start_date} and {end_date}"
         )
 
-    # Remove timezone info from index for cleaner output
+    # 移除索引中的时区信息以便输出更整洁
     if data.index.tz is not None:
         data.index = data.index.tz_localize(None)
 
-    # Round numerical values to 2 decimal places for cleaner display
+    # 将数值四舍五入到 2 位小数，便于展示
     numeric_columns = ["Open", "High", "Low", "Close", "Adj Close"]
     for col in numeric_columns:
         if col in data.columns:
             data[col] = data[col].round(2)
 
-    # Convert DataFrame to CSV string
+    # 将 DataFrame 转换为 CSV 字符串
     csv_string = data.to_csv()
 
-    # Add header information
+    # 添加表头信息
     header = f"# Stock data for {symbol.upper()} from {start_date} to {end_date}\n"
     header += f"# Total records: {len(data)}\n"
     header += f"# Data retrieved on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
@@ -672,7 +672,7 @@ def get_YFin_data(
     start_date: Annotated[str, "Start date in yyyy-mm-dd format"],
     end_date: Annotated[str, "End date in yyyy-mm-dd format"],
 ) -> str:
-    # read in data
+    # 读取数据
     data = pd.read_csv(
         os.path.join(
             DATA_DIR,
@@ -685,18 +685,18 @@ def get_YFin_data(
             f"Get_YFin_Data: {end_date} is outside of the data range of 2015-01-01 to 2025-03-25"
         )
 
-    # Extract just the date part for comparison
+    # 仅提取日期部分用于比较
     data["DateOnly"] = data["Date"].str[:10]
 
-    # Filter data between the start and end dates (inclusive)
+    # 过滤起始和结束日期（含）之间的数据
     filtered_data = data[
         (data["DateOnly"] >= start_date) & (data["DateOnly"] <= end_date)
     ]
 
-    # Drop the temporary column we created
+    # 删除临时创建的列
     filtered_data = filtered_data.drop("DateOnly", axis=1)
 
-    # remove the index from the dataframe
+    # 移除数据框索引
     filtered_data = filtered_data.reset_index(drop=True)
 
     return filtered_data

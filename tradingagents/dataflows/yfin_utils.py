@@ -1,4 +1,4 @@
-# gets data/stats
+# 获取数据/统计信息
 
 import yfinance as yf
 from typing import Annotated, Callable, Any, Optional
@@ -35,11 +35,11 @@ class YFinanceUtils:
     ) -> DataFrame:
         """retrieve stock price data for designated ticker symbol"""
         ticker = symbol
-        # add one day to the end_date so that the data range is inclusive
+        # 将结束日期加一天以便数据范围包含该日
         end_date = pd.to_datetime(end_date) + pd.DateOffset(days=1)
         end_date = end_date.strftime("%Y-%m-%d")
         stock_data = ticker.history(start=start_date, end=end_date)
-        # save_output(stock_data, f"Stock data for {ticker.ticker}", save_path)
+        # save_output(stock_data, f"Stock data for {ticker.ticker}", save_path)  # 保存输出
         return stock_data
 
     def get_stock_info(
@@ -105,12 +105,12 @@ class YFinanceUtils:
         ticker = symbol
         recommendations = ticker.recommendations
         if recommendations.empty:
-            return None, 0  # No recommendations available
+            return None, 0  # 没有可用的推荐
 
-        # Assuming 'period' column exists and needs to be excluded
-        row_0 = recommendations.iloc[0, 1:]  # Exclude 'period' column if necessary
+        # 假设存在 'period' 列，需要排除
+        row_0 = recommendations.iloc[0, 1:]  # 如有必要，排除 'period' 列
 
-        # Find the maximum voting result
+        # 查找最高得票结果
         max_votes = row_0.max()
         majority_voting_result = row_0[row_0 == max_votes].index.tolist()
 

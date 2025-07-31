@@ -48,7 +48,7 @@ class ConditionalLogic:
 
         if (
             state["investment_debate_state"]["count"] >= 2 * self.max_debate_rounds
-        ):  # 3 rounds of back-and-forth between 2 agents
+        ):  # 两个代理来回交互 3 轮
             return "Research Manager"
         if state["investment_debate_state"]["current_response"].startswith("Bull"):
             return "Bear Researcher"
@@ -58,7 +58,7 @@ class ConditionalLogic:
         """Determine if risk analysis should continue."""
         if (
             state["risk_debate_state"]["count"] >= 3 * self.max_risk_discuss_rounds
-        ):  # 3 rounds of back-and-forth between 3 agents
+        ):  # 三个代理来回交互 3 轮
             return "Risk Judge"
         if state["risk_debate_state"]["latest_speaker"].startswith("Risky"):
             return "Safe Analyst"

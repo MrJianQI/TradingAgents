@@ -20,10 +20,10 @@ def create_msg_delete():
         """Clear messages and add placeholder for Anthropic compatibility"""
         messages = state["messages"]
         
-        # Remove all messages
+        # 删除所有消息
         removal_operations = [RemoveMessage(id=m.id) for m in messages]
         
-        # Add a minimal placeholder message
+        # 添加一个最小占位消息
         placeholder = HumanMessage(content="Continue")
         
         return {"messages": removal_operations + [placeholder]}

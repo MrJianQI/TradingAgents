@@ -25,7 +25,7 @@ def is_rate_limited(response):
 )
 def make_request(url, headers):
     """Make a request with retry logic for rate limiting"""
-    # Random delay before each request to avoid detection
+    # 每次请求前随机延迟以避免被检测
     time.sleep(random.uniform(2, 6))
     response = requests.get(url, headers=headers)
     return response
@@ -69,7 +69,7 @@ def getNewsData(query, start_date, end_date):
             results_on_page = soup.select("div.SoaBEf")
 
             if not results_on_page:
-                break  # No more results found
+                break  # 没有更多结果
 
             for el in results_on_page:
                 try:
@@ -89,12 +89,12 @@ def getNewsData(query, start_date, end_date):
                     )
                 except Exception as e:
                     print(f"Error processing result: {e}")
-                    # If one of the fields is not found, skip this result
+                    # 如果某个字段未找到，则跳过该条结果
                     continue
 
-            # Update the progress bar with the current count of results scraped
+            # 更新进度条，显示已抓取的结果数量
 
-            # Check for the "Next" link (pagination)
+            # 检查 "Next" 链接（分页）
             next_link = soup.find("a", id="pnnext")
             if not next_link:
                 break
