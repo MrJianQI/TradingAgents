@@ -28,7 +28,7 @@ def get_data_in_range(ticker, start_date, end_date, data_type, data_dir, period=
     data = open(data_path, "r")
     data = json.load(data)
 
-    # filter keys (date, str in format YYYY-MM-DD) by the date range (str, str in format YYYY-MM-DD)
+    # 根据日期范围（字符串，格式为 YYYY-MM-DD）过滤键（日期，字符串，格式为 YYYY-MM-DD）
     filtered_data = {}
     for key, value in data.items():
         if start_date <= key <= end_date and len(value) > 0:

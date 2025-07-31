@@ -1,7 +1,7 @@
 import tradingagents.default_config as default_config
 from typing import Dict, Optional
 
-# Use default config but allow it to be overridden
+# 使用默认配置（可被覆盖）
 _config: Optional[Dict] = None
 DATA_DIR: Optional[str] = None
 
@@ -30,5 +30,5 @@ def get_config() -> Dict:
     return _config.copy()
 
 
-# Initialize with default config
+# 使用默认配置初始化
 initialize_config()

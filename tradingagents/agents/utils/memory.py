@@ -68,10 +68,10 @@ class FinancialSituationMemory:
 
 
 if __name__ == "__main__":
-    # Example usage
+    # 示例用法
     matcher = FinancialSituationMemory()
 
-    # Example data
+    # 示例数据
     example_data = [
         (
             "High inflation rate with rising interest rates and declining consumer spending",
@@ -91,10 +91,10 @@ if __name__ == "__main__":
         ),
     ]
 
-    # Add the example situations and recommendations
+    # 添加示例情景和建议
     matcher.add_situations(example_data)
 
-    # Example query
+    # 示例查询
     current_situation = """
     Market showing increased volatility in tech sector, with institutional investors 
     reducing positions and rising interest rates affecting growth stock valuations

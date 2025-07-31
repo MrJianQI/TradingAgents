@@ -48,16 +48,16 @@ class TradingAgentsGraph:
         self.debug = debug
         self.config = config or DEFAULT_CONFIG
 
-        # Update the interface's config
+        # 更新接口配置
         set_config(self.config)
 
-        # Create necessary directories
+        # 创建必要的目录
         os.makedirs(
             os.path.join(self.config["project_dir"], "dataflows/data_cache"),
             exist_ok=True,
         )
 
-        # Initialize LLMs
+        # 初始化 LLM
         if self.config["llm_provider"].lower() == "openai" or self.config["llm_provider"] == "ollama" or self.config["llm_provider"] == "openrouter":
             self.deep_thinking_llm = ChatOpenAI(model=self.config["deep_think_llm"], base_url=self.config["backend_url"])
             self.quick_thinking_llm = ChatOpenAI(model=self.config["quick_think_llm"], base_url=self.config["backend_url"])
@@ -72,17 +72,17 @@ class TradingAgentsGraph:
         
         self.toolkit = Toolkit(config=self.config)
 
-        # Initialize memories
+        # 初始化记忆模块
         self.bull_memory = FinancialSituationMemory("bull_memory", self.config)
         self.bear_memory = FinancialSituationMemory("bear_memory", self.config)
         self.trader_memory = FinancialSituationMemory("trader_memory", self.config)
         self.invest_judge_memory = FinancialSituationMemory("invest_judge_memory", self.config)
         self.risk_manager_memory = FinancialSituationMemory("risk_manager_memory", self.config)
 
-        # Create tool nodes
+        # 创建工具节点
         self.tool_nodes = self._create_tool_nodes()
 
-        # Initialize components
+        # 初始化组件
         self.conditional_logic = ConditionalLogic()
         self.graph_setup = GraphSetup(
             self.quick_thinking_llm,
@@ -101,12 +101,12 @@ class TradingAgentsGraph:
         self.reflector = Reflector(self.quick_thinking_llm)
         self.signal_processor = SignalProcessor(self.quick_thinking_llm)
 
-        # State tracking
+        # 状态跟踪
         self.curr_state = None
         self.ticker = None
-        self.log_states_dict = {}  # date to full state dict
+        self.log_states_dict = {}  # 日期到完整状态的映射
 
-        # Set up the graph
+        # 设置图结构
         self.graph = self.graph_setup.setup_graph(selected_analysts)
 
     def _create_tool_nodes(self) -> Dict[str, ToolNode]:
@@ -114,37 +114,37 @@ class TradingAgentsGraph:
         return {
             "market": ToolNode(
                 [
-                    # online tools
+                    # 在线工具
                     self.toolkit.get_YFin_data_online,
                     self.toolkit.get_stockstats_indicators_report_online,
-                    # offline tools
+                    # 离线工具
                     self.toolkit.get_YFin_data,
                     self.toolkit.get_stockstats_indicators_report,
                 ]
             ),
             "social": ToolNode(
                 [
-                    # online tools
+                    # 在线工具
                     self.toolkit.get_stock_news_openai,
-                    # offline tools
+                    # 离线工具
                     self.toolkit.get_reddit_stock_info,
                 ]
             ),
             "news": ToolNode(
                 [
-                    # online tools
+                    # 在线工具
                     self.toolkit.get_global_news_openai,
                     self.toolkit.get_google_news,
-                    # offline tools
+                    # 离线工具
                     self.toolkit.get_finnhub_news,
                     self.toolkit.get_reddit_news,
                 ]
             ),
             "fundamentals": ToolNode(
                 [
-                    # online tools
+                    # 在线工具
                     self.toolkit.get_fundamentals_openai,
-                    # offline tools
+                    # 离线工具
                     self.toolkit.get_finnhub_company_insider_sentiment,
                     self.toolkit.get_finnhub_company_insider_transactions,
                     self.toolkit.get_simfin_balance_sheet,
@@ -159,14 +159,14 @@ class TradingAgentsGraph:
 
         self.ticker = company_name
 
-        # Initialize state
+        # 初始化状态
         init_agent_state = self.propagator.create_initial_state(
             company_name, trade_date
         )
         args = self.propagator.get_graph_args()
 
         if self.debug:
-            # Debug mode with tracing
+            # 调试模式，带跟踪
             trace = []
             for chunk in self.graph.stream(init_agent_state, **args):
                 if len(chunk["messages"]) == 0:
@@ -177,16 +177,16 @@ class TradingAgentsGraph:
 
             final_state = trace[-1]
         else:
-            # Standard mode without tracing
+            # 非调试模式，不启用跟踪
             final_state = self.graph.invoke(init_agent_state, **args)
 
-        # Store current state for reflection
+        # 存储当前状态以便回溯
         self.curr_state = final_state
 
-        # Log state
+        # 记录状态
         self._log_state(trade_date, final_state)
 
-        # Return decision and processed signal
+        # 返回决策及处理后的信号
         return final_state, self.process_signal(final_state["final_trade_decision"])
 
     def _log_state(self, trade_date, final_state):
@@ -221,7 +221,7 @@ class TradingAgentsGraph:
             "final_trade_decision": final_state["final_trade_decision"],
         }
 
-        # Save to file
+        # 保存到文件
         directory = Path(f"eval_results/{self.ticker}/TradingAgentsStrategy_logs/")
         directory.mkdir(parents=True, exist_ok=True)
 
